@@ -6,6 +6,7 @@ Lazy mans processing of passwords
 import re
 import numpy as np
 
+
 def process_line(line):
     """Process line input data and return values in schema.
 
@@ -14,7 +15,7 @@ def process_line(line):
     """
     processed_line = np.array(re.sub("-|\s", ":", line).split(":"))
     processed_line = processed_line[processed_line != ""]
-    min_l, max_l, letter, password =  processed_line
+    min_l, max_l, letter, password = processed_line
     return int(min_l), int(max_l), letter, password
 
 
@@ -24,7 +25,7 @@ def check_validity_1(min_l, max_l, letter, password):
     Letter count in password must satisfy: min_l<= letter # <= max_l
     """
     num_counts = password.count(letter)
-    return (num_counts >= min_l)*(num_counts<= max_l)
+    return (num_counts >= min_l) * (num_counts <= max_l)
 
 
 def check_validity_2(min_l, max_l, letter, password):
@@ -33,7 +34,7 @@ def check_validity_2(min_l, max_l, letter, password):
     Only one of positions min_l and max_l in password should contain letter
     """
     # convert to index
-    imin, imax = min_l - 1, max_l -1
+    imin, imax = min_l - 1, max_l - 1
     # deal with case that the index is
     # larger than the password
     if imax >= len(password):
@@ -50,7 +51,7 @@ def get_valid_password_number(file_name):
 
     file_name = path to input data
     """
-    f = open(file_name,"r")
+    f = open(file_name, "r")
     valid_list = []
     for line in f.readlines():
         processed_line = process_line(line)
@@ -59,6 +60,7 @@ def get_valid_password_number(file_name):
         valid_list.append(is_valid)
     f.close()
     return np.sum(valid_list)
+
 
 if __name__ == "__main__":
     #file_name = "test_input2.txt"
