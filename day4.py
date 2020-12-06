@@ -5,6 +5,7 @@ import re
 import numpy as np
 import pytest
 
+
 def process_line(line):
     """Convert line to dictionary"""
     line = re.sub("\n", "", line)
@@ -47,17 +48,19 @@ def check_valid_passport_field_number(passport):
         raise ValueError(f"Number of keys greater than expected {passport}")
     return valid_passport
 
+
 def check_height(height_value):
-    units= height_value[-2:]
+    units = height_value[-2:]
     value = int(height_value[:-2])
 
     if units == "cm":
-        is_correct = (value >= 150)*(value <= 193)
+        is_correct = (value >= 150) * (value <= 193)
     elif units == "in":
-        is_correct = (value >= 59)*(value <= 76)
+        is_correct = (value >= 59) * (value <= 76)
     else:
         is_correct = False
     return is_correct
+
 
 def check_hair_colour(hair_colour):
     #if hair_colour[0] == "#" and re.search("[0-9a-z]{6}",hair_colour[1:]):
@@ -67,12 +70,14 @@ def check_hair_colour(hair_colour):
         is_valid = False
     return is_valid
 
+
 def check_eye_colour(eye_colour):
-    if eye_colour in ("amb","blu","brn","gry","grn","hzl","oth"):
+    if eye_colour in ("amb", "blu", "brn", "gry", "grn", "hzl", "oth"):
         is_valid = True
     else:
         is_valid = False
     return is_valid
+
 
 def check_pid(pid):
     if re.search("^[0-9]{9}$", pid):
@@ -81,9 +86,10 @@ def check_pid(pid):
         is_valid = False
     return is_valid
 
+
 def check_year(value, min_year, max_year):
     value = int(value)
-    if ((value)>=min_year) and (value<=max_year):
+    if ((value) >= min_year) and (value <= max_year):
         is_valid = True
     else:
         is_valid = False
@@ -119,26 +125,24 @@ def check_passports(filename):
 
     return np.sum(valid_pp)
 
-@pytest.mark.parametrize("input,expected",[
-    ("#cfa07d", True), ("#ae17e1", True),
-    ("#ae17e1", True), ("123abc", False),
-    ("#ae17e13", False)
-])
+
+@pytest.mark.parametrize("input,expected", [("#cfa07d", True), ("#ae17e1", True), ("#ae17e1", True),
+                                            ("123abc", False), ("#ae17e13", False)])
 def test_hcl(input, expected):
     is_valid = check_hair_colour(input)
     assert is_valid == expected
 
 
-@pytest.mark.parametrize("input,expected",[
-    ("60in", True), ("190cm", True),
-    ("190in", False), ("190", False)
-])
+@pytest.mark.parametrize("input,expected", [("60in", True), ("190cm", True), ("190in", False),
+                                            ("190", False)])
 def test_hgt(input, expected):
     is_valid = check_height(input)
     assert is_valid == expected
 
-@pytest.mark.parametrize("input,expected",[
-    ("000000001", True), ("0123456789", False),
+
+@pytest.mark.parametrize("input,expected", [
+    ("000000001", True),
+    ("0123456789", False),
 ])
 def test_pid(input, expected):
     is_valid = check_pid(input)

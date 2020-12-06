@@ -13,7 +13,7 @@ def load_data(fname):
     f.close()
 
     line_length = find_line_length(data[0])
-    array_data = []  #
+    array_data = []    #
     print("id = ", line_length)
     for il, line in enumerate(data):
         array_data.append(list(data[il])[:line_length])
@@ -73,8 +73,7 @@ def main():
     total_number_of_trees = []
     for gradient in gradients:
         across, down = gradient
-        number_of_trees = get_number_of_encountered_trees(
-            across, down, tree_map)
+        number_of_trees = get_number_of_encountered_trees(across, down, tree_map)
         total_number_of_trees.append(number_of_trees)
 
     print("total_number_of_trees = ", total_number_of_trees)
