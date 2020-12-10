@@ -6,25 +6,28 @@ What value is in the accumulator before an instruction is run a second time?
 """
 import re
 
+
 def process_line(line):
 
     line = line.strip()
-    g = re.search("^([a-z]{3}) ([+\-0-9]+)" , line)
+    g = re.search("^([a-z]{3}) ([+\-0-9]+)", line)
     if not g:
         raise ValueError(f"{line} format not understood")
     instruction, jump = g.groups()
     return instruction, int(jump)
 
+
 def process_instruction(current_line, accum, instruction, jump):
     # do nothing
-    current_line +=1
+    current_line += 1
     #if instruction == "nop":
     #    out_line = current_line
     if instruction == "acc":
         accum += jump
     elif instruction == "jmp":
-        current_line += jump -1
+        current_line += jump - 1
     return current_line, accum
+
 
 def switch_jmp_nop(instruction):
     if instruction == "jmp":
@@ -35,7 +38,8 @@ def switch_jmp_nop(instruction):
         out = instruction
     return out
 
-def read_file_instructions(data, switch_line = None):
+
+def read_file_instructions(data, switch_line=None):
     """Read through file instructions and sum up accum
 
     switch_line is an integer index that indicates a line for which
@@ -91,5 +95,5 @@ def main():
                 break
 
 
-if __name__=="__main__":
+if __name__ == "__main__":
     main()
