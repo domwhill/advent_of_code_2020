@@ -20,6 +20,8 @@ def get_manhatten_distance(position):
 def deg_to_radians(deg):
     return (deg/360.0)*(2.0*np.pi)
 
+def radians_to_degree(rad):
+    return (rad/(2.0*np.pi))*360.0
 
 def get_orientation_from_angle(deg):
     rad = deg_to_radians(deg)
@@ -34,6 +36,19 @@ def update_ship_orientation(ship_orientation, direction, step):
         position = update_position(angle, direction, position, step)
     return (position, angle)
 
+
+def update_ship_orientation_2(ship_position, waypoint_position, direction, step):
+
+    if direction == "F":
+        ship_position = update_ship_position(ship_position, waypoint_position, step)
+
+    elif direction in ("L", "R"):
+        waypoint_position = rotate_waypoint(direction, waypoint_position, step)
+
+    else:
+        waypoint_position = update_waypoint_position(direction, waypoint_position, step)
+    return (ship_position, waypoint_position)
+
 def update_position(angle, direction, position, step):
     direction_lookup = \
         {"N": np.array([0.0, 1.0]),
@@ -43,6 +58,30 @@ def update_position(angle, direction, position, step):
          "F": get_orientation_from_angle(angle)}
     position += direction_lookup[direction] * step
     return position
+
+def update_waypoint_position(direction, position, step):
+    direction_lookup = \
+        {"N": np.array([0.0, 1.0]),
+         "S": np.array([0.0, -1.0]),
+         "E": np.array([1.0, 0.0]),
+         "W": np.array([-1.0, 0.0])
+         }
+    position += direction_lookup[direction] * step
+    return position
+
+def rotate_waypoint(direction, position, step):
+    angle_lookup = {"L": 1, "R": -1}
+    step_rad= angle_lookup[direction]*deg_to_radians(step)
+
+    R = np.array([[np.cos(step_rad), - np.sin(step_rad)],
+                 [np.sin(step_rad), np.cos(step_rad)]])
+
+    new_waypoint = R.dot(position)
+    return new_waypoint
+
+def update_ship_position(ship_position, waypoint_position, step):
+    ship_position += waypoint_position * step
+    return ship_position
 
 def update_angle(angle, direction, step):
     angle_lookup = {"L": 1, "R": -1}
@@ -68,7 +107,7 @@ def main():
         direction, step = mline.groups()[0], int(mline.groups()[1])
         ship_orientation = update_ship_orientation(ship_orientation, direction, step)
 
-        print(f"ship_orientation = {ship_orientation}, instruction = {direction}, {step}")
+        print(f"ship_orientation = {ship_orientation} instruction = {direction}, {step}")
 
     print("final position = ", position, get_manhatten_distance(position))
 
@@ -77,18 +116,18 @@ def main2():
     file_name = "day12_input.txt"
 
     data = read_file(file_name)
-    position, angle = np.array([0.0, 0.0]), 0.0
-    waypoint_position, waypoint_angle = np.array([10.0, 1.0]), 0.0
+    ship_position = np.array([0.0, 0.0])
+    waypoint_position = np.array([10.0, 1.0])
 
-    ship_orientation = (position, angle)
     for line in data:
         mline = re.search("^([A-Z])([0-9]+)", line)
         direction, step = mline.groups()[0], int(mline.groups()[1])
-        ship_orientation = update_ship_orientation(ship_orientation, direction, step)
+        ship_position, waypoint_position = update_ship_orientation_2(ship_position, waypoint_position, direction, step)
+        print(f"ship_orientation = {ship_position}, waypoint_orientation = {waypoint_position}"
+              f" instruction = {direction}, {step}")
 
-        print(f"ship_orientation = {ship_orientation}, instruction = {direction}, {step}")
-
-    print("final position = ", position, get_manhatten_distance(position))
+    print("final position = ", ship_position, waypoint_position, get_manhatten_distance(ship_position))
 
 if __name__ == "__main__":
-    main()
+    main2()
+    #  52069
