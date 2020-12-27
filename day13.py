@@ -85,13 +85,29 @@ def get_simultaneous_stop_time(bus_delays, bus_intervals):
     while True:
         # get zero delay time
         time = -bus_delay0 + bus_interval0 * n
-        # time interval remainder from required arrival time for buses
-        remainders = get_bus_remainders(time, bus_delays, bus_intervals)
-        if np.sum(remainders) == 0:
-            print("Matching time = ", time)
-            break
         n += 1
+        # time interval remainder from required arrival time for buses
+        if get_remainder_sum(time, bus_delays, bus_intervals) == 0:
+            break
     return time
+
+
+def get_remainder_sum(time0, bus_delays, bus_intervals):
+    remainder_sum = 0
+
+    for ib, bus_delay in enumerate(bus_delays):
+
+        remainder_sum += get_bus_remainders(time0, bus_delay, bus_intervals[ib])
+        if remainder_sum > 0:
+            break
+
+
+def main():
+    file_name = "day13_input.txt"
+    wait_times_by_bus_interval = part1(file_name)
+    print(f"Part1 answer = {wait_times_by_bus_interval}")
+    earliest_timestamp = part2(file_name)
+    print(f"Part 2 answer = {earliest_timestamp}")
 
 
 @pytest.mark.parametrize("input,expected", [
@@ -105,14 +121,6 @@ def test_part2(input, expected):
     bus_delays, bus_intervals = process_file_string_to_bus_info(input.split(','))
     stop_time = get_simultaneous_stop_time(bus_delays, bus_intervals)
     assert stop_time == expected
-
-
-def main():
-    file_name = "day13_input.txt"
-    wait_times_by_bus_interval = part1(file_name)
-    print(f"Part1 answer = {wait_times_by_bus_interval}")
-    earliest_timestamp = part2(file_name)
-    print(f"Part 2 answer = {earliest_timestamp}")
 
 
 if __name__ == "__main__":

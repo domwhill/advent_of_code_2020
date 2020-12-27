@@ -13,15 +13,18 @@ import re
 import numpy as np
 # star facing east
 
+
 def get_manhatten_distance(position):
     return np.sum(np.abs(position))
 
 
 def deg_to_radians(deg):
-    return (deg/360.0)*(2.0*np.pi)
+    return (deg / 360.0) * (2.0 * np.pi)
+
 
 def radians_to_degree(rad):
-    return (rad/(2.0*np.pi))*360.0
+    return (rad / (2.0 * np.pi)) * 360.0
+
 
 def get_orientation_from_angle(deg):
     rad = deg_to_radians(deg)
@@ -49,6 +52,7 @@ def update_ship_orientation_2(ship_position, waypoint_position, direction, step)
         waypoint_position = update_waypoint_position(direction, waypoint_position, step)
     return (ship_position, waypoint_position)
 
+
 def update_position(angle, direction, position, step):
     direction_lookup = \
         {"N": np.array([0.0, 1.0]),
@@ -58,6 +62,7 @@ def update_position(angle, direction, position, step):
          "F": get_orientation_from_angle(angle)}
     position += direction_lookup[direction] * step
     return position
+
 
 def update_waypoint_position(direction, position, step):
     direction_lookup = \
@@ -69,19 +74,21 @@ def update_waypoint_position(direction, position, step):
     position += direction_lookup[direction] * step
     return position
 
+
 def rotate_waypoint(direction, position, step):
     angle_lookup = {"L": 1, "R": -1}
-    step_rad= angle_lookup[direction]*deg_to_radians(step)
+    step_rad = angle_lookup[direction] * deg_to_radians(step)
 
-    R = np.array([[np.cos(step_rad), - np.sin(step_rad)],
-                 [np.sin(step_rad), np.cos(step_rad)]])
+    R = np.array([[np.cos(step_rad), -np.sin(step_rad)], [np.sin(step_rad), np.cos(step_rad)]])
 
     new_waypoint = R.dot(position)
     return new_waypoint
 
+
 def update_ship_position(ship_position, waypoint_position, step):
     ship_position += waypoint_position * step
     return ship_position
+
 
 def update_angle(angle, direction, step):
     angle_lookup = {"L": 1, "R": -1}
@@ -94,6 +101,7 @@ def read_file(file_name):
     data = f.readlines()
     f.close()
     return data
+
 
 def main():
     file_name = "day12_test_input.txt"
@@ -111,6 +119,7 @@ def main():
 
     print("final position = ", position, get_manhatten_distance(position))
 
+
 def main2():
     file_name = "day12_test_input.txt"
     file_name = "day12_input.txt"
@@ -122,12 +131,15 @@ def main2():
     for line in data:
         mline = re.search("^([A-Z])([0-9]+)", line)
         direction, step = mline.groups()[0], int(mline.groups()[1])
-        ship_position, waypoint_position = update_ship_orientation_2(ship_position, waypoint_position, direction, step)
+        ship_position, waypoint_position = update_ship_orientation_2(ship_position,
+                                                                     waypoint_position, direction,
+                                                                     step)
         print(f"ship_orientation = {ship_position}, waypoint_orientation = {waypoint_position}"
               f" instruction = {direction}, {step}")
 
-    print("final position = ", ship_position, waypoint_position, get_manhatten_distance(ship_position))
+    print("final position = ", ship_position, waypoint_position,
+          get_manhatten_distance(ship_position))
+
 
 if __name__ == "__main__":
     main2()
-    #  52069
